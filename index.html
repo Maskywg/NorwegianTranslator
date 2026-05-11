@@ -262,21 +262,31 @@
       translatedText = '';
 
       try {
-        const mmFrom = lang().from === 'zh-TW' ? 'zh-TW' : lang().from;
-        const mmTo   = lang().to   === 'zh-TW' ? 'zh-TW' : lang().to;
-        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${mmFrom}|${mmTo}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        if (data.responseStatus !== 200) throw new Error(data.responseStatus);
-        let result = data.responseData.translatedText;
-        if (result.includes('%')) result = decodeURIComponent(result);
+        let result = '';
 
+        // 方案一：Google Translate（支援 zh-TW 繁體）
+        try {
+          const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${lang().from}&tl=${lang().to}&dt=t&q=${encodeURIComponent(text)}`;
+          const res = await fetch(url);
+          const data = await res.json();
+          result = data[0].map(s => s[0]).join('');
+        } catch {
+          // 方案二：MyMemory 備用
+          const mmFrom = lang().from === 'zh-TW' ? 'zh-TW' : lang().from;
+          const mmTo   = lang().to   === 'zh-TW' ? 'zh-TW' : lang().to;
+          const url2 = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${mmFrom}|${mmTo}`;
+          const res2 = await fetch(url2);
+          const data2 = await res2.json();
+          result = data2.responseData.translatedText;
+          if (result.includes('%')) result = decodeURIComponent(result);
+        }
+
+        if (!result) throw new Error('翻譯結果為空');
         translatedText = result;
         document.getElementById('output-box').innerHTML = `<div class="output-text">${result}</div>`;
         document.getElementById('speak-btn').style.display = 'block';
       } catch (e) {
-        document.getElementById('output-box').innerHTML = `<span class="placeholder-text">翻譯失敗：${e.message}，請確認網路連線</span>`;
+        document.getElementById('output-box').innerHTML = `<span class="placeholder-text">翻譯失敗：${e.message}</span>`;
       }
     }
 
