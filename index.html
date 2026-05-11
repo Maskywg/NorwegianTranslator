@@ -262,8 +262,8 @@
       translatedText = '';
 
       try {
-        const mmFrom = lang().from.split('-')[0];
-        const mmTo   = lang().to.split('-')[0];
+        const mmFrom = lang().from === 'zh-TW' ? 'zh-TW' : lang().from;
+        const mmTo   = lang().to   === 'zh-TW' ? 'zh-TW' : lang().to;
         const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${mmFrom}|${mmTo}`;
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
