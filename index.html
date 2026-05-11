@@ -183,12 +183,11 @@
     <!-- 輸入區 -->
     <div class="card">
       <div class="card-label" id="from-label">挪威語</div>
-      <textarea id="input-text" placeholder="輸入文字或點上方麥克風說話..." rows="4"
-        oninput="updateCharCount()"></textarea>
+      <textarea id="input-text" placeholder="輸入文字或點上方麥克風說話..." rows="4"></textarea>
       <div class="char-count" id="char-count">0 / 500</div>
       <div class="row">
         <button class="clear-btn" onclick="clearAll()">清除</button>
-        <button class="translate-btn" id="translate-btn" onclick="doTranslate()" disabled>翻譯</button>
+        <button class="translate-btn" id="translate-btn" onclick="doTranslate()">翻譯</button>
       </div>
     </div>
 
@@ -243,7 +242,6 @@
       const el = document.getElementById('char-count');
       el.textContent = `${text.length} / 500`;
       el.className = 'char-count' + (text.length > 500 ? ' over' : '');
-      document.getElementById('translate-btn').disabled = text.trim().length === 0 || text.length > 500;
     }
 
     function clearAll() {
@@ -362,11 +360,12 @@
       if (recognition) recognition.stop();
     }
 
-    // Enter 鍵翻譯（桌面用）
-    document.getElementById('input-text').addEventListener('keydown', e => {
+    const inputEl = document.getElementById('input-text');
+    inputEl.addEventListener('input', updateCharCount);
+    inputEl.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        translate();
+        doTranslate();
       }
     });
 
