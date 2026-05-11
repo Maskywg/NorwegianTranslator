@@ -188,7 +188,7 @@
       <div class="char-count" id="char-count">0 / 500</div>
       <div class="row">
         <button class="clear-btn" onclick="clearAll()">清除</button>
-        <button class="translate-btn" id="translate-btn" onclick="translate()" disabled>翻譯</button>
+        <button class="translate-btn" id="translate-btn" onclick="doTranslate()" disabled>翻譯</button>
       </div>
     </div>
 
@@ -255,7 +255,7 @@
       translatedText = '';
     }
 
-    async function translate() {
+    async function doTranslate() {
       const text = document.getElementById('input-text').value.trim();
       if (!text || text.length > 500) return;
 
